@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  python:
+    # image: docker.io/python:3.7-alpine3.16
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    container_name: tele
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}" # UID:GID
+    volumes:
+      # - /etc/localtime:/etc/localtime:ro
+      - ./:/var/app
+    working_dir: /var/app
+    command: "sh /var/app/start.sh"
