@@ -39,9 +39,13 @@ def get_data_group(client, phone):
     chats.extend(query.chats)
     for chat in chats:
         try:
-            if chat.megagroup is not None and chat.access_hash is not None:
+            # if chat.megagroup is not None and chat.access_hash is not None:
+            if int(getattr(chat, 'participants_count', 0)) > 0:
                 groups.append(chat)
-        except:
+                # print(f"\n\n")
+                # print(chat)
+        except Exception as e:
+            print(e)
             continue
 
     results = []
@@ -49,12 +53,13 @@ def get_data_group(client, phone):
         try:
             tmp = {
                 'group_id': str(group.id),
-                'access_hash': str(group.access_hash),
+                'access_hash': str(getattr(group, 'access_hash', None)),
                 'title': str(group.title),
             }
             results.append(tmp)
 
-            if group.megagroup == True:
+            # if group.megagroup == True:
+            if getattr(group, 'megagroup', None) == True:
                 get_data_user(client, group, phone)
         except Exception as e:
             print(e)
@@ -90,7 +95,9 @@ def get_data_user(client, group, phone):
     path_file = 'data/user/' + phone + "_" + group_id + '.json'
 
     for user in all_participants:
-        # print(user)
+        # if group_id == '2191418392':
+        #     print(f"\n\n")
+        #     print(user)
         # print(type(user.status))
         try:
             if isinstance(user.status, UserStatusRecently):
@@ -112,6 +119,12 @@ def get_data_user(client, group, phone):
                 'user_id': str(user.id),
                 'access_hash': str(user.access_hash),
                 'username': str(user.username),
+                'first_name': str(user.first_name),
+                'last_name': str(user.last_name),
+                'phone': str(user.phone),
+                'bot': str(user.bot),
+                'contact': str(user.contact),
+                'mutual_contact': str(user.mutual_contact),
                 "date_online": date_online_str
             }
             results.append(tmp)

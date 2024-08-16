@@ -9,7 +9,9 @@ from helpers.utils import add_default_args, exit_app, get_args, exit_app
 from helpers.tele_client import create
 from datetime import datetime, timedelta
 from telethon.tl.types import InputPeerChannel
+from telethon.tl.types import InputChannel
 from telethon.tl.types import InputPeerUser
+from telethon.tl.types import InputUser
 from telethon.tl.functions.channels import InviteToChannelRequest
 from telethon.errors.rpcerrorlist import PeerFloodError, UserPrivacyRestrictedError, FloodWaitError
 
@@ -94,7 +96,8 @@ if not target_users:
 source_users_user_id = [user['user_id'] for user in source_users]
 target_users_user_id = [user['user_id'] for user in target_users]
 
-target_group_entity = InputPeerChannel(int(target_group['group_id']), int(target_group['access_hash']))
+# target_group_entity = InputPeerChannel(int(target_group['group_id']), int(target_group['access_hash']))
+target_group_entity = InputChannel(int(target_group['group_id']), int(target_group['access_hash']))
 
 i = 0
 for user in source_users:
@@ -103,8 +106,10 @@ for user in source_users:
         if user['user_id'] in target_users_user_id:
             continue
 
-        user_to_add = InputPeerUser(int(user['user_id']), int(user['access_hash']))
-        client(InviteToChannelRequest(target_group_entity, [user_to_add]))
+        # user_to_add = InputPeerUser(int(user['user_id']), int(user['access_hash']))
+        user_to_add = InputUser(int(user['user_id']), int(user['access_hash']))
+        # client(InviteToChannelRequest(target_group_entity, [user_to_add]))
+        client(InviteToChannelRequest(target_group_entity, user_to_add))
         print(f"Add user {user['username']} to group {target_group['title']} successfully")
 
     except PeerFloodError as e:
